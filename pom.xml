@@ -1,10 +1,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.cxy.fzu</groupId>
-  <artifactId>j2ee</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>AgvJ2EE</artifactId>
   <name>tomcat j2ee test</name>
   <description>my simple test</description>
+  <packaging>war</packaging>
+  <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>web</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+            <plugin>
+			    <groupId>org.apache.tomcat.maven</groupId>
+			    <artifactId>tomcat7-maven-plugin</artifactId>
+			    <version>2.2</version>
+			    <configuration>
+			         <url>http://192.168.181.136:8080/manager/text</url><!-- 注意tomcat此处的url -->
+			         <username>tomcat</username><!-- 此处的名字必须和conf/tomcat-users.xml中配置的一致-->
+			         <password>tomcat</password><!-- 此处的密码必须和conf/tomcat-users.xml中配置的一致-->
+			         <update>true</update>
+			         <path>/AgvJ2EE</path> <!-- 此处的名字是项目发布的工程名-->
+			    </configuration>
+			</plugin>
+
+        </plugins>
+    </build>
+  <version>0.0.1-SNAPSHOT</version>
+  
   <dependencies>
   	<dependency>
   		<groupId>javax.servlet</groupId>
@@ -12,9 +43,29 @@
   		<version>3.1.0</version>
   	</dependency>
   	<dependency>
-	    <groupId>org.apache.tomcat.embed</groupId>
-	    <artifactId>tomcat-embed-core</artifactId>
-	    <version>9.0.46</version>
+  		<groupId>javax</groupId>
+  		<artifactId>javaee-api</artifactId>
+  		<version>7.0</version>
+  	</dependency>
+  	<dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.1.0</version>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>2.1.0</version>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.1.0</version>
+    </dependency>
+    <dependency>
+        <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
+        <artifactId>classloader-leak-prevention-servlet</artifactId>
+        <version>2.1.0</version>
     </dependency>
   </dependencies>
 </project>
