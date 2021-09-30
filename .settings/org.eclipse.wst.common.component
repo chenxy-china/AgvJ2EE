@@ -1,33 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                            
-    
-    
-    
-    
-    
-    <wb-module deploy-name="AgvJ2EE">
-        <wb-resource deploy-path="/" source-path="/web" tag="defaultRootSource"/>
+    <wb-module deploy-name="AgvJ2EE-0.0.1-SNAPSHOT">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                                                        
-        
-        
-        
-        
-        
-        <property name="java-output-path" value="/AgvJ2EE/web/WEB-INF/classes"/>
-                
         <property name="context-root" value="AgvJ2EE"/>
-                                                    
-    
-    
-    
-    
-    
+        <property name="java-output-path" value="/AgvJ2EE/target/classes"/>
     </wb-module>
-                        
-
-
-
-
-
 </project-modules>
