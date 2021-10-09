@@ -80,8 +80,8 @@ public class ServiceTools {
     public void setScanListener(final ScanListener apiHandlerGetLaser) {
         AgvEngine.ScanCallback agvScanCallback = new AgvEngine.ScanCallback() {
 
-            public void onScanCallback(LaserMessage msg) throws Exception {
-                apiHandlerGetLaser.onScanListener(msg);
+            public void onScanCallback(Object obj) throws Exception {
+                apiHandlerGetLaser.onScanListener((LaserMessage)obj);
             }
         };
         AgvEngine.getInstance().setScanCallback(agvScanCallback);
@@ -89,13 +89,11 @@ public class ServiceTools {
     
     public void setScanListener() {
         AgvEngine.ScanCallback agvScanCallback = new AgvEngine.ScanCallback() {
-            ObjectMapper mapper = new ObjectMapper();
-            
-            public void onScanCallback(LaserMessage msg) throws Exception {
-                String message = mapper.writeValueAsString(msg);
+
+            public void onScanCallback(Object obj) throws Exception {
                 //广播出去
                 System.out.println("ws broadCast");
-                ServerManager.broadCast(message);
+                ServerManager.broadCast(obj);
             }
         };
         AgvEngine.getInstance().setScanCallback(agvScanCallback);

@@ -3,7 +3,7 @@ package com.jni.cxy;
 public class AgvEngine {
 
     public interface ScanCallback {
-        public void onScanCallback(LaserMessage msg) throws Exception;
+        public void onScanCallback(Object msg) throws Exception;
     }
 
     private static ScanCallback mScanCallback;
@@ -87,8 +87,9 @@ public class AgvEngine {
         JniGetLaserData();
     }
 
-    public static void sendScanResultFromNative(LaserMessage msg) throws Exception {
+    public static void sendScanResultFromNative(Object msg) throws Exception {
         // Native层中Laser扫描一次结束，触发本方法，发送Laser扫描结果
+        // 或者发送建图中的map数据
         mScanCallback.onScanCallback(msg);
     }
 
