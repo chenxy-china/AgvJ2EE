@@ -8,6 +8,9 @@ import java.util.Collections;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.jni.cxy.LaserMessage;
+import com.jni.cxy.MapMessage;
+
 public class ServerManager {
     private static Collection<LaserDataServer> laserdataservers = Collections.synchronizedCollection(new ArrayList<LaserDataServer>());
     private static Collection<MapDataServer> mapdataservers = Collections.synchronizedCollection(new ArrayList<MapDataServer>());
@@ -16,7 +19,7 @@ public class ServerManager {
     public static void broadCast(Object obj) throws JsonProcessingException{
         String msg = mapper.writeValueAsString(obj);
 
-        if(obj instanceof  LaserDataServer) {
+        if(obj instanceof  LaserMessage) {
             for (LaserDataServer ldServer : laserdataservers) {
                 try {
                     ldServer.sendMessage(msg);
@@ -25,7 +28,7 @@ public class ServerManager {
                     e.printStackTrace();
                 }
             }
-        }else if(obj instanceof  MapDataServer) {
+        }else if(obj instanceof  MapMessage) {
             for (MapDataServer mdServer : mapdataservers) {
                 try {
                     mdServer.sendMessage(msg);
@@ -35,14 +38,24 @@ public class ServerManager {
                 }
             }
         }
-
+        else {
+            System.out.println("unknown msg type");
+            for (LaserDataServer ldServer : laserdataservers) {
+                try {
+                    ldServer.sendMessage(msg);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
     }
      
     public static int getTotal(){
         return laserdataservers.size()+mapdataservers.size();
     }
     
-    public static void add(Object server){
+    public static void add(DataServer server){
         if(server instanceof  LaserDataServer) {
             laserdataservers.add((LaserDataServer) server);
             System.out.println("有新连接加入LaserDataServer！ 当前连接数是："+ laserdataservers.size());
@@ -54,7 +67,7 @@ public class ServerManager {
     }
 
     
-    public static void remove(Object server){
+    public static void remove(DataServer server){
         if(server instanceof  LaserDataServer) {
             laserdataservers.remove((LaserDataServer) server);
             System.out.println("有连接退出LaserDataServer！ 当前连接数是："+ laserdataservers.size());
