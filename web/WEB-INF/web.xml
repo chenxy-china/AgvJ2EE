@@ -42,17 +42,27 @@
 
     <servlet-mapping>
         <servlet-name>ApiHandlerCreMap</servlet-name>
-        <url-pattern>/agvinterface/createmap</url-pattern>
+        <url-pattern>/startcreatemap</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>ApiHandlerGetLaser</servlet-name>
-        <servlet-class>com.api.cxy.ApiHandlerGetLaser</servlet-class>
+        <servlet-name>ApiHandlerCreMapStop</servlet-name>
+        <servlet-class>com.api.cxy.ApiHandlerCreMapStop</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>ApiHandlerGetLaser</servlet-name>
-        <url-pattern>/agvinterface/getlaserdata</url-pattern>
+        <servlet-name>ApiHandlerCreMapStop</servlet-name>
+        <url-pattern>/stopcreatemap</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ApiHandlerSaveMap</servlet-name>
+        <servlet-class>com.api.cxy.ApiHandlerSaveMap</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ApiHandlerSaveMap</servlet-name>
+        <url-pattern>/savemap</url-pattern>
     </servlet-mapping>
 
 </web-app>

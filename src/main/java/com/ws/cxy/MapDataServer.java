@@ -7,7 +7,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint("/ws/getmapdata")
+@ServerEndpoint("/getmapdata")
 public class MapDataServer extends DataServer {
 
 }

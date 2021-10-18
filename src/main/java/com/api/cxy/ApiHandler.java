@@ -22,7 +22,7 @@ import com.sun.net.httpserver.HttpHandler;
 public class ApiHandler extends HttpServlet implements HttpHandler {
     
     public void init(ServletConfig config){
-        System.out.println("******"+this.getClass().getName()+"******初始化AGV底层");
+        System.out.println("******"+this.getClass().getName()+"******初始化AGV底层******");
         
         // 初始化AGV底层
         ServiceTools.getInstance().startInit();
@@ -30,7 +30,7 @@ public class ApiHandler extends HttpServlet implements HttpHandler {
     }
     
     public void destroy() {
-        System.out.println("******"+this.getClass().getName()+"******反初始化AGV底层,释放资源");
+        System.out.println("******"+this.getClass().getName()+"******反初始化AGV底层,释放资源******");
         // 反初始化AGV底层,释放资源
         ServiceTools.getInstance().startDeInit();
     }

@@ -8,6 +8,8 @@ import com.ws.cxy.ServerManager;
 public class ServiceTools {
 
     private boolean initStatus = false;
+    private boolean agentStatus = false;
+    private boolean mapSendStatus = false;
     private static ServiceTools mInstance = new ServiceTools();
 
     private ServiceTools() {
@@ -39,30 +41,29 @@ public class ServiceTools {
             System.out.println("Thread AgvInit_Runnable run");
 //          long startTime = System.currentTimeMillis();
             if (AgvEngine.getInstance().initAgvEngine()) {
-                AgvEngine.getInstance().start();
                 initStatus = true;
             }
 //          long consumingTime = System.currentTimeMillis() - startTime;
         }
     };
 
-    public Runnable AgvDeInit_Runnable = new Runnable() {
-        public void run() {
-            System.out.println("Thread AgvDeInit_Runnable run");
-            AgvDeInit_func();
-        }
-    };
+//    public Runnable AgvDeInit_Runnable = new Runnable() {
+//        public void run() {
+//            System.out.println("Thread AgvDeInit_Runnable run");
+//            AgvDeInit_func();
+//        }
+//    };
 
     public void AgvDeInit_func() {
         System.out.println("AgvDeInit_func run");
 //      long startTime = System.currentTimeMillis();
-        AgvEngine.getInstance().stop();
         AgvEngine.getInstance().deinitAgvEngine();
 //      long consumingTime = System.currentTimeMillis() - startTime;    
     }
     
     public boolean startCreateMap() {
         if (initStatus) {
+            AgvEngine.getInstance().startSensor();
             AgvEngine.getInstance().startCreateMap();
             return true;
         }
@@ -77,6 +78,66 @@ public class ServiceTools {
         return false;
     }
 
+    public boolean stopCreateMap() {
+        if (initStatus) {
+            AgvEngine.getInstance().stopCreateMap();
+            AgvEngine.getInstance().stopSensor();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean saveMap() {
+        if (initStatus) {
+            return AgvEngine.getInstance().saveMap();
+        }
+        return false;
+    }
+    
+    public boolean startSendLaserData() {
+        if (initStatus) {
+            if(!agentStatus) {
+                agentStatus = AgvEngine.getInstance().startSendLaserData();
+            }
+            return agentStatus;
+        }
+        return false;
+    }
+    
+    public boolean stopSendLaserData() {
+        if (initStatus) {
+            if(agentStatus) {
+                if(AgvEngine.getInstance().stopSendLaserData()) {
+                    agentStatus = false;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean startSendMapData() {
+        if (initStatus) {
+            if(!mapSendStatus) {
+                mapSendStatus = AgvEngine.getInstance().startSendMapData();
+            }
+            return mapSendStatus;
+        }
+        return false;
+    }
+    
+    public boolean stopSendMapData() {
+        if (initStatus) {
+            if(mapSendStatus) {
+                if(AgvEngine.getInstance().stopSendMapData()) {
+                    mapSendStatus = false;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     public void setScanListener(final ScanListener apiHandlerGetLaser) {
         AgvEngine.ScanCallback agvScanCallback = new AgvEngine.ScanCallback() {
 

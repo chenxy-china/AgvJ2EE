@@ -37,6 +37,8 @@ public class AgvEngine {
                 if (JniInit()) {
                     String nativeInfVer = JniGetVersion();
                     System.out.println("Jni Version :"+nativeInfVer);
+                    
+                    JniSetLaserScanCallbakFunc("sendScanResultFromNative");
                     System.out.println("initAgvEngine() successfully");
                     return true;
                 }
@@ -61,32 +63,60 @@ public class AgvEngine {
         return false;
     }
 
-    public void start() {
+    public void startSensor() {
         System.out.println("Start IMU");
         JniStartIMU("127.0.0.1");
         
         System.out.println("Start Laser");
         JniStartLaser("127.0.0.1");
-        
-        JniSetLaserScanCallbakFunc("sendScanResultFromNative");
     }
 
-    public void stop() {
+    public void stopSensor() {
         System.out.println("Stop IMU");
         JniStopIMU("127.0.0.1");
         System.out.println("Stop Laser");
         JniStopLaser("127.0.0.1");
     }
 
-    public void startCreateMap() {
+    public boolean startCreateMap() {
         System.out.println("Start Create Map");
-        JniStartCreateMap();
+        return JniStartCreateMap();
     }
 
     public void GetLaserData() {
         JniGetLaserData();
     }
 
+    public boolean stopCreateMap() {
+        System.out.println("Stop Create Map");
+        return JniStopCreateMap();
+    }
+    
+    public boolean saveMap() {
+        System.out.println("Save Map");
+        return JniSaveMap();
+    }
+    
+    public boolean startSendLaserData() {
+        System.out.println("Start send laser data");
+        return JniStartSendLaserData();
+    }
+
+    public boolean stopSendLaserData() {
+        System.out.println("Stop send laser data");
+        return JniStopSendLaserData();
+    }
+
+    public boolean startSendMapData() {
+        System.out.println("Start send map data");
+        return JniStartSendMapData();
+    }
+
+    public boolean stopSendMapData() {
+        System.out.println("Stop send map data");
+        return JniStopSendMapData();
+    }
+    
     public static void sendScanResultFromNative(Object msg) throws Exception {
         // Native层中Laser扫描一次结束，触发本方法，发送Laser扫描结果
         // 或者发送建图中的map数据
@@ -122,4 +152,12 @@ public class AgvEngine {
     private native boolean JniGetLaserData();
 
     private native boolean JniSetLaserScanCallbakFunc(String callbackFunc);
+    
+    private native boolean JniStartSendLaserData();
+    
+    private native boolean JniStopSendLaserData();
+    
+    private native boolean JniStartSendMapData();
+    
+    private native boolean JniStopSendMapData();
 }

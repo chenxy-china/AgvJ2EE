@@ -7,7 +7,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint("/ws/getlaserdata")
+import com.jni.cxy.ServiceTools;
+
+@ServerEndpoint("/getlaserdata")
 public class LaserDataServer extends DataServer{
-    
 }

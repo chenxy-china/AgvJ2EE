@@ -14,15 +14,15 @@ public class DataServer {
     
     @OnOpen
     public void onOpen(Session session){
-        System.out.println("client ws connect");  
+        System.out.println("client ws connect");
         this.session = session;
-        ServerManager.add(this);    
+        ServerManager.add(this);
     }
     
     @OnClose
     public void onClose(){
         System.out.println("client ws disconnect");
-        ServerManager.remove(this); 
+        ServerManager.remove(this);
     }
     
     public void sendMessage(String message) throws IOException{

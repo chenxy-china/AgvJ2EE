@@ -3,7 +3,6 @@ package com.api.cxy;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +11,7 @@ import com.jni.cxy.ServiceTools;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-public class ApiHandlerCreMap extends HttpServlet implements HttpHandler {
+public class ApiHandlerCreMapStop extends HttpServlet implements HttpHandler{
     
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp)
@@ -22,18 +21,17 @@ public class ApiHandlerCreMap extends HttpServlet implements HttpHandler {
         // 响应内容
         String response = "execution OK";
 
-        // 开始建图
-        if (!ServiceTools.getInstance().startCreateMap()) {
+        // 停止发送地图数据
+        if (!ServiceTools.getInstance().stopSendMapData()) {
+            response = "Stop Send Map failed";
+            System.out.println(response);
+        }
+        // 停止建图
+        if (!ServiceTools.getInstance().stopCreateMap()) {
             response = "AgvEngine initialize unfinished";
             System.out.println(response);
-        }else {
-            // 开始发送地图数据
-            if (!ServiceTools.getInstance().startSendMapData()) {
-                response = "Start Send Map failed";
-                System.out.println(response);
-            }
         }
-        
+
         // 设置响应头
         resp.setHeader("Content-Type", "text/html; charset=UTF-8");
         resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -59,7 +57,7 @@ public class ApiHandlerCreMap extends HttpServlet implements HttpHandler {
         String response = "execution OK";
 
         // 开始建图
-        if (ServiceTools.getInstance().startCreateMap()) {
+        if (ServiceTools.getInstance().stopCreateMap()) {
             response = "initialize unfinished";
         }
 
@@ -77,5 +75,4 @@ public class ApiHandlerCreMap extends HttpServlet implements HttpHandler {
         os.close();
 
     }
-
 }
