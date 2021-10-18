@@ -41,6 +41,7 @@ public class ServiceTools {
             System.out.println("Thread AgvInit_Runnable run");
 //          long startTime = System.currentTimeMillis();
             if (AgvEngine.getInstance().initAgvEngine()) {
+                AgvEngine.getInstance().startSensor();
                 initStatus = true;
             }
 //          long consumingTime = System.currentTimeMillis() - startTime;
@@ -57,13 +58,16 @@ public class ServiceTools {
     public void AgvDeInit_func() {
         System.out.println("AgvDeInit_func run");
 //      long startTime = System.currentTimeMillis();
+        stopSendLaserData();
+        stopSendMapData();
+        stopCreateMap();
+        AgvEngine.getInstance().stopSensor();
         AgvEngine.getInstance().deinitAgvEngine();
 //      long consumingTime = System.currentTimeMillis() - startTime;    
     }
     
     public boolean startCreateMap() {
         if (initStatus) {
-            AgvEngine.getInstance().startSensor();
             AgvEngine.getInstance().startCreateMap();
             return true;
         }
@@ -81,7 +85,6 @@ public class ServiceTools {
     public boolean stopCreateMap() {
         if (initStatus) {
             AgvEngine.getInstance().stopCreateMap();
-            AgvEngine.getInstance().stopSensor();
             return true;
         }
         return false;
