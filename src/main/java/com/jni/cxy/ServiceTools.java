@@ -10,6 +10,7 @@ public class ServiceTools {
     private boolean initStatus = false;
     private boolean agentStatus = false;
     private boolean mapSendStatus = false;
+    private boolean mappingStatus = false;
     private static ServiceTools mInstance = new ServiceTools();
 
     private ServiceTools() {
@@ -68,8 +69,10 @@ public class ServiceTools {
     
     public boolean startCreateMap() {
         if (initStatus) {
-            AgvEngine.getInstance().startCreateMap();
-            return true;
+            if(!mappingStatus) {
+                mappingStatus = AgvEngine.getInstance().startCreateMap();
+            }
+            return mappingStatus;
         }
         return false;
     }
@@ -83,9 +86,11 @@ public class ServiceTools {
     }
 
     public boolean stopCreateMap() {
-        if (initStatus) {
-            AgvEngine.getInstance().stopCreateMap();
-            return true;
+        if (mappingStatus) {
+            if(AgvEngine.getInstance().stopCreateMap()) {
+                mappingStatus = false;
+                return true;
+            }
         }
         return false;
     }
@@ -108,12 +113,10 @@ public class ServiceTools {
     }
     
     public boolean stopSendLaserData() {
-        if (initStatus) {
-            if(agentStatus) {
-                if(AgvEngine.getInstance().stopSendLaserData()) {
-                    agentStatus = false;
-                    return true;
-                }
+        if(agentStatus) {
+            if(AgvEngine.getInstance().stopSendLaserData()) {
+                agentStatus = false;
+                return true;
             }
         }
         return false;
@@ -130,12 +133,10 @@ public class ServiceTools {
     }
     
     public boolean stopSendMapData() {
-        if (initStatus) {
-            if(mapSendStatus) {
-                if(AgvEngine.getInstance().stopSendMapData()) {
-                    mapSendStatus = false;
-                    return true;
-                }
+        if(mapSendStatus) {
+            if(AgvEngine.getInstance().stopSendMapData()) {
+                mapSendStatus = false;
+                return true;
             }
         }
         return false;
