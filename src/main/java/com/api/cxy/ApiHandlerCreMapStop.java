@@ -23,12 +23,12 @@ public class ApiHandlerCreMapStop extends HttpServlet implements HttpHandler{
 
         // 停止发送地图数据
         if (!ServiceTools.getInstance().stopSendMapData()) {
-            response = "Stop Send Map failed";
+            response +=" MapSend already Stopped";
             System.out.println(response);
         }
         // 停止建图
         if (!ServiceTools.getInstance().stopCreateMap()) {
-            response = "AgvEngine initialize unfinished";
+            response +=" MapCreate already Stopped";
             System.out.println(response);
         }
 
