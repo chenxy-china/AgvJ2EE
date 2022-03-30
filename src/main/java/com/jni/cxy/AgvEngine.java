@@ -1,6 +1,10 @@
 package com.jni.cxy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AgvEngine {
+    Logger logger = LoggerFactory.getLogger(AgvEngine.class);
 
     public interface ScanCallback {
         public void onScanCallback(Object msg) throws Exception;
@@ -11,35 +15,35 @@ public class AgvEngine {
     private static AgvEngine mInstance = new AgvEngine();
 
     private AgvEngine() {
-        System.out.println("new AgvEngine()");
+        logger.info("new AgvEngine()");
     }
 
     public static AgvEngine getInstance() {
         return mInstance;
     }
 
-    static private boolean flaglibso=false;
+    static private boolean flaglibso = false;
     static {
+        Logger logger = LoggerFactory.getLogger(AgvEngine.class);
         try {
             // 载入本地库
             System.loadLibrary("AgvCtrlJni");
-            flaglibso=true;
+            flaglibso = true;
         } catch (Throwable e) {
-            System.out.println("load libAgvCtrlJni.so failed");
+            logger.info("load libAgvCtrlJni.so failed");
             e.printStackTrace();
         }
     }
 
     public boolean initAgvEngine() {
-        System.out.println("initAgvEngine() start");
-        if(flaglibso) {
+        logger.info("initAgvEngine() start");
+        if (flaglibso) {
             try {
+                String nativeInfVer = JniGetVersion();
+                logger.info("Jni Version :" + nativeInfVer);
                 if (JniInit()) {
-                    String nativeInfVer = JniGetVersion();
-                    System.out.println("Jni Version :"+nativeInfVer);
-                    
                     JniSetLaserScanCallbakFunc("sendScanResultFromNative");
-                    System.out.println("initAgvEngine() successfully");
+                    logger.info("initAgvEngine() successfully");
                     return true;
                 }
             } catch (Exception e) {
@@ -49,37 +53,37 @@ public class AgvEngine {
             }
         }
 
-        System.out.println("initAgvEngine() unsuccessfully");
+        logger.error("initAgvEngine() unsuccessfully");
         return false;
     }
 
     public boolean deinitAgvEngine() {
-        System.out.println("deinitAgvEngine() start");
+        logger.info("deinitAgvEngine() start");
         if (JniDeInit()) {
-            System.out.println("deinitAgvEngine() successfully");
+            logger.info("deinitAgvEngine() successfully");
             return true;
         }
-        System.out.println("deinitAgvEngine() unsuccessfully");
+        logger.error("deinitAgvEngine() unsuccessfully");
         return false;
     }
 
     public void startSensor() {
-        System.out.println("Start IMU");
+        logger.info("Start IMU");
         JniStartIMU("127.0.0.1");
-        
-        System.out.println("Start Laser");
+
+        logger.info("Start Laser");
         JniStartLaser("127.0.0.1");
     }
 
     public void stopSensor() {
-        System.out.println("Stop IMU");
+        logger.info("Stop IMU");
         JniStopIMU("127.0.0.1");
-        System.out.println("Stop Laser");
+        logger.info("Stop Laser");
         JniStopLaser("127.0.0.1");
     }
 
     public boolean startCreateMap() {
-        System.out.println("Start Create Map");
+        logger.info("Start Create Map");
         return JniStartCreateMap();
     }
 
@@ -88,35 +92,55 @@ public class AgvEngine {
     }
 
     public boolean stopCreateMap() {
-        System.out.println("Stop Create Map");
+        logger.info("Stop Create Map");
         return JniStopCreateMap();
     }
-    
-    public boolean saveMap() {
-        System.out.println("Save Map");
-        return JniSaveMap();
+
+    public boolean saveMap(String fn) {
+        logger.info("Save Map");
+        return JniSaveMap(fn);
     }
-    
+
     public boolean startSendLaserData() {
-        System.out.println("Start send laser data");
+        logger.info("Start send laser data");
         return JniStartSendLaserData();
     }
 
     public boolean stopSendLaserData() {
-        System.out.println("Stop send laser data");
+        logger.info("Stop send laser data");
         return JniStopSendLaserData();
     }
 
     public boolean startSendMapData() {
-        System.out.println("Start send map data");
+        logger.info("Start send map data");
         return JniStartSendMapData();
     }
 
     public boolean stopSendMapData() {
-        System.out.println("Stop send map data");
+        logger.info("Stop send map data");
         return JniStopSendMapData();
     }
-    
+
+    public boolean setPubMap(String fn) {
+        logger.info("set publish map");
+        return JniSetPubMap(fn);
+    }
+
+    public boolean setImuLocate(float arr[]) {
+        logger.info("set IMU locate");
+        return JniSetImuLocate(arr);
+    }
+
+    public boolean startRelocate(String fn,float arr[]) {
+        logger.info("Start relocate");
+        return JniStartRelocate(fn,arr);
+    }
+
+    public boolean stopRelocate() {
+        logger.info("Stop relocate");
+        return JniStopRelocate();
+    }
+
     public static void sendScanResultFromNative(Object msg) throws Exception {
         // Native层中Laser扫描一次结束，触发本方法，发送Laser扫描结果
         // 或者发送建图中的map数据
@@ -145,19 +169,27 @@ public class AgvEngine {
 
     private native boolean JniStopCreateMap();
 
-    private native boolean JniSaveMap();
+    private native boolean JniSaveMap(String fn);
 
     private native String JniGetMap();
 
     private native boolean JniGetLaserData();
 
     private native boolean JniSetLaserScanCallbakFunc(String callbackFunc);
-    
+
     private native boolean JniStartSendLaserData();
-    
+
     private native boolean JniStopSendLaserData();
-    
+
     private native boolean JniStartSendMapData();
-    
+
     private native boolean JniStopSendMapData();
+
+    private native boolean JniSetPubMap(String fn);
+
+    private native boolean JniStartRelocate(String fn,float arr[]);
+
+    private native boolean JniStopRelocate();
+
+    private native boolean JniSetImuLocate(float arr[]);
 }

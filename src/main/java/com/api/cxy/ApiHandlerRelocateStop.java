@@ -19,16 +19,15 @@ import com.sun.net.httpserver.HttpHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
-    Logger logger = LoggerFactory.getLogger(ApiHandlerSaveMap.class);
+public class ApiHandlerRelocateStop extends HttpServlet implements HttpHandler {
+    Logger logger = LoggerFactory.getLogger(ApiHandlerRelocateStop.class);
     // 响应内容
     String response = "execution OK";
 
-    private void executeCmd(String fn)
+    private void executeCmd()
     {
-        // 保存地图
-        if (!ServiceTools.getInstance().saveMap(fn)) {
+        // 设置发布地图
+        if (!ServiceTools.getInstance().stopRelocate()) {
             response = "execution NG";
         }
     }
@@ -60,13 +59,13 @@ public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
         logger.info("body: " + body);
 
         String ip;
-        String fname="";
+
         // 将body中的String数据json反序列化
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode jsonNode = mapper.readTree(body);
             ip = jsonNode.get("IP").asText();
-            fname = jsonNode.get("name").asText();
+
             logger.info("IP: " + ip);
             // 响应内容
             //response = "find IP in body";
@@ -80,7 +79,7 @@ public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
             response = "IOException";
         }
        
-        executeCmd(fname);
+        executeCmd();
 
         // 设置响应头
         resp.setHeader("Content-Type", "text/html; charset=UTF-8");
@@ -103,7 +102,6 @@ public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
 
     public void handle(HttpExchange exchange) throws IOException {
         logger.info("******" + this.getClass().getName() + "******");
-
         // 获取body中的String数据
         InputStream is = exchange.getRequestBody();
         InputStreamReader isr = new InputStreamReader(is);
@@ -119,13 +117,12 @@ public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
         logger.info("body: " + body);
 
         String ip;
-        String fname="";
+
         // 将body中的String数据json反序列化
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode jsonNode = mapper.readTree(body);
             ip = jsonNode.get("IP").asText();
-            fname = jsonNode.get("name").asText();
             logger.info("IP: " + ip);
             // 响应内容
             //response = "find IP in body";
@@ -139,7 +136,7 @@ public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
             response = "Exception";
         } 
         
-        executeCmd(fname);
+        executeCmd();
 
         // 设置响应头
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
@@ -157,3 +154,4 @@ public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
         os.close();
     }
 }
+

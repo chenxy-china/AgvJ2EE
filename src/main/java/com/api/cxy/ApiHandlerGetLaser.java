@@ -13,23 +13,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jni.cxy.LaserMessage;
 import com.jni.cxy.ServiceTools;
 
-public class ApiHandlerGetLaser extends HttpServlet  implements HttpHandler, LaserMessage.ScanListener {
-
+public class ApiHandlerGetLaser extends HttpServlet implements HttpHandler, LaserMessage.ScanListener {
+    Logger logger = LoggerFactory.getLogger(ApiHandlerGetLaser.class);
     // 响应内容
     String response = "execution OK";
     HttpExchange mExchange;
-    
+
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp)
-    {
-        System.out.println("******"+this.getClass().getName()+"******");
-        
+    protected void service(HttpServletRequest req, HttpServletResponse resp) {
+        logger.info("******" + this.getClass().getName() + "******");
+
         // 获取激光数据
         ServiceTools.getInstance().getLaserData();
-        
+
         // 设置响应头
         resp.setHeader("Content-Type", "text/html; charset=UTF-8");
         resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -38,26 +40,27 @@ public class ApiHandlerGetLaser extends HttpServlet  implements HttpHandler, Las
         // 设置响应code和内容长度
         resp.setStatus(200);
         resp.setBufferSize(response.length());
-        
+
         // 设置响应内容
         try {
-            OutputStream os = resp.getOutputStream();//获取OutputStream输出流
-            byte[] dataByteArr = response.getBytes("UTF-8");//将字符转换成字节数组，指定以UTF-8编码进行转换
+            OutputStream os = resp.getOutputStream();// 获取OutputStream输出流
+            byte[] dataByteArr = response.getBytes("UTF-8");// 将字符转换成字节数组，指定以UTF-8编码进行转换
             os.write(dataByteArr);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
     public void handle(HttpExchange exchange) throws IOException {
-
+        logger.info("******" + this.getClass().getName() + "******");
         // 获取激光数据
         if (ServiceTools.getInstance().getLaserData() == false) {
 
             response = "initialize unfinished";
 
             // 设置响应头
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Method", "POST,GET");
             exchange.getResponseHeaders().add("Content-Type", "text/html; charset=UTF-8");
 
             // 设置响应code和内容长度
@@ -73,6 +76,7 @@ public class ApiHandlerGetLaser extends HttpServlet  implements HttpHandler, Las
         this.mExchange = exchange;
     }
 
+    @Override
     public void onScanListener(LaserMessage msg) throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();

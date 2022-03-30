@@ -65,4 +65,43 @@
         <url-pattern>/savemap</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ApiHandlerSetPubMap</servlet-name>
+        <servlet-class>com.api.cxy.ApiHandlerSetPubMap</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ApiHandlerSetPubMap</servlet-name>
+        <url-pattern>/setpublishmap</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ApiHandlerRelocate</servlet-name>
+        <servlet-class>com.api.cxy.ApiHandlerRelocate</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ApiHandlerRelocate</servlet-name>
+        <url-pattern>/startrelocate</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ApiHandlerRelocateStop</servlet-name>
+        <servlet-class>com.api.cxy.ApiHandlerRelocateStop</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ApiHandlerRelocateStop</servlet-name>
+        <url-pattern>/stoprelocate</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ApiHandlerSetImuLocate</servlet-name>
+        <servlet-class>com.api.cxy.ApiHandlerSetImuLocate</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ApiHandlerSetImuLocate</servlet-name>
+        <url-pattern>/setimulocate</url-pattern>
+    </servlet-mapping>
 </web-app>

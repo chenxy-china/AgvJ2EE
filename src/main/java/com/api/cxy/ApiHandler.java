@@ -19,32 +19,34 @@ import com.jni.cxy.ServiceTools;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-public class ApiHandler extends HttpServlet implements HttpHandler {
-    
-    public void init(ServletConfig config){
-        System.out.println("******"+this.getClass().getName()+"******初始化AGV底层******");
-        
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ApiHandler implements HttpHandler {
+    Logger logger = LoggerFactory.getLogger(ApiHandler.class);
+
+    public void init(ServletConfig config) {
+        logger.info("******" + this.getClass().getName() + "******初始化AGV底层******");
+
         // 初始化AGV底层
         ServiceTools.getInstance().startInit();
         ServiceTools.getInstance().setScanListener();
     }
-    
+
     public void destroy() {
-        System.out.println("******"+this.getClass().getName()+"******反初始化AGV底层,释放资源******");
+        logger.info("******" + this.getClass().getName() + "******反初始化AGV底层,释放资源******");
         // 反初始化AGV底层,释放资源
         ServiceTools.getInstance().startDeInit();
     }
-    
-    public void service(HttpServletRequest req, HttpServletResponse resp)
-    {
-        System.out.println("******"+this.getClass().getName()+"******");
+
+    public void service(HttpServletRequest req, HttpServletResponse resp) {
+        logger.info("******" + this.getClass().getName() + "******");
 
         // 获取body中的String数据
-        InputStream is=null;
+        InputStream is = null;
         try {
             is = req.getInputStream();
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
         InputStreamReader isr = new InputStreamReader(is);
@@ -56,14 +58,13 @@ public class ApiHandler extends HttpServlet implements HttpHandler {
                 sb.append(line);
             }
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
         // 将资料解码
         String body = sb.toString();
-        System.out.println("body: " + body);
-        System.out.println(" ");
+        logger.info("body: " + body);
+        logger.info(" ");
 
         String response = "";
         try {
@@ -71,23 +72,21 @@ public class ApiHandler extends HttpServlet implements HttpHandler {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(body);
             String ip = jsonNode.get("IP").asText();
-            System.out.println("IP: " + ip);
+            logger.info("IP: " + ip);
             // 响应内容
             response = "find IP in body";
-        }catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
+        } catch (JsonMappingException e) {
             e.printStackTrace();
             // 响应内容
             response = "JsonMappingException";
-        }catch (IOException e) {
-            // TODO Auto-generated catch block
+        } catch (IOException e) {
             e.printStackTrace();
             // 响应内容
             response = "IOException";
         }
-        
-        //System.out.println(response);
-        
+
+        logger.info(response);
+
         // 设置响应头
         resp.setHeader("Content-Type", "text/html; charset=UTF-8");
         resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -96,21 +95,21 @@ public class ApiHandler extends HttpServlet implements HttpHandler {
         // 设置响应code和内容长度
         resp.setStatus(200);
         resp.setBufferSize(response.length());
-        
+
         // 设置响应内容
         try {
-            OutputStream os = resp.getOutputStream();//获取OutputStream输出流
-            byte[] dataByteArr = response.getBytes("UTF-8");//将字符转换成字节数组，指定以UTF-8编码进行转换
+            OutputStream os = resp.getOutputStream();// 获取OutputStream输出流
+            byte[] dataByteArr = response.getBytes("UTF-8");// 将字符转换成字节数组，指定以UTF-8编码进行转换
             os.write(dataByteArr);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
     }
-    
+
     public void handle(HttpExchange exchange) throws IOException {
-        System.out.println("******"+this.getClass().getName()+"******");
+        logger.info("******" + this.getClass().getName() + "******");
+
         // 获取body中的String数据
         InputStream is = exchange.getRequestBody();
         InputStreamReader isr = new InputStreamReader(is);
@@ -123,7 +122,7 @@ public class ApiHandler extends HttpServlet implements HttpHandler {
 
         // 将资料解码
         String body = sb.toString();
-        System.out.println("body: " + body);
+        logger.info("body: " + body);
 
         String response = "";
         // 将body中的String数据json反序列化
@@ -131,29 +130,34 @@ public class ApiHandler extends HttpServlet implements HttpHandler {
         try {
             JsonNode jsonNode = mapper.readTree(body);
             String ip = jsonNode.get("IP").asText();
-            System.out.println("IP: " + ip);
+            logger.info("IP: " + ip);
             // 响应内容
             response = "find IP in body";
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+            // 响应内容
+            response = "JsonMappingException";
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             // 响应内容
             response = "Exception";
-        } finally {
-            System.out.println(response);
-            // 设置响应头
-            exchange.getResponseHeaders().add("Content-Type", "text/html; charset=UTF-8");
+        } 
 
-            // 设置响应code和内容长度
-            exchange.sendResponseHeaders(200, response.length());
+        logger.info(response);
 
-            // 设置响应内容
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
+        // 设置响应头
+        exchange.getResponseHeaders().add("Content-Type", "text/html; charset=UTF-8");
 
-            // 关闭处理器, 同时将关闭请求和响应的输入输出流（如果还没关闭）
-            os.close();
-        }
+        // 设置响应code和内容长度
+        exchange.sendResponseHeaders(200, response.length());
+
+        // 设置响应内容
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+
+        // 关闭处理器, 同时将关闭请求和响应的输入输出流（如果还没关闭）
+        os.close();
+
 
     }
 

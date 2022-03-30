@@ -5,8 +5,11 @@ import com.jni.cxy.LaserMessage;
 import com.jni.cxy.LaserMessage.ScanListener;
 import com.ws.cxy.ServerManager;
 
-public class ServiceTools {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class ServiceTools {
+    Logger logger = LoggerFactory.getLogger(ServiceTools.class);
     private boolean initStatus = false;
     private boolean agentStatus = false;
     private boolean mapSendStatus = false;
@@ -14,7 +17,7 @@ public class ServiceTools {
     private static ServiceTools mInstance = new ServiceTools();
 
     private ServiceTools() {
-        System.out.println("new ServiceTools()");
+        logger.info("new ServiceTools()");
     }
 
     public static ServiceTools getInstance() {
@@ -23,8 +26,9 @@ public class ServiceTools {
 
     public void startInit() {
         if (!initStatus) {
-            Thread td = new Thread(ServiceTools.getInstance().AgvInit_Runnable);
-            td.start();
+            // Thread td = new Thread(ServiceTools.getInstance().AgvInit_Runnable);
+            // td.start();
+            AgvInit_func();
         }
     }
 
@@ -39,37 +43,47 @@ public class ServiceTools {
 
     public Runnable AgvInit_Runnable = new Runnable() {
         public void run() {
-            System.out.println("Thread AgvInit_Runnable run");
+            logger.info("Thread AgvInit_Runnable run");
 //          long startTime = System.currentTimeMillis();
             if (AgvEngine.getInstance().initAgvEngine()) {
-                AgvEngine.getInstance().startSensor();
+                //AgvEngine.getInstance().startSensor();
                 initStatus = true;
             }
 //          long consumingTime = System.currentTimeMillis() - startTime;
         }
     };
 
+    public void AgvInit_func() {
+        logger.info("AgvInit_func run");
+//      long startTime = System.currentTimeMillis();
+        if (AgvEngine.getInstance().initAgvEngine()) {
+            //AgvEngine.getInstance().startSensor();
+            initStatus = true;
+        }
+//      long consumingTime = System.currentTimeMillis() - startTime;
+    }
+
 //    public Runnable AgvDeInit_Runnable = new Runnable() {
 //        public void run() {
-//            System.out.println("Thread AgvDeInit_Runnable run");
+//            logger.info("Thread AgvDeInit_Runnable run");
 //            AgvDeInit_func();
 //        }
 //    };
 
     public void AgvDeInit_func() {
-        System.out.println("AgvDeInit_func run");
+        logger.info("AgvDeInit_func run");
 //      long startTime = System.currentTimeMillis();
-        stopSendLaserData();
-        stopSendMapData();
-        stopCreateMap();
-        AgvEngine.getInstance().stopSensor();
+        // stopSendLaserData();
+        // stopSendMapData();
+        // stopCreateMap();
+        // AgvEngine.getInstance().stopSensor();
         AgvEngine.getInstance().deinitAgvEngine();
 //      long consumingTime = System.currentTimeMillis() - startTime;    
     }
-    
+
     public boolean startCreateMap() {
         if (initStatus) {
-            if(!mappingStatus) {
+            if (!mappingStatus) {
                 mappingStatus = AgvEngine.getInstance().startCreateMap();
             }
             return mappingStatus;
@@ -87,7 +101,7 @@ public class ServiceTools {
 
     public boolean stopCreateMap() {
         if (mappingStatus) {
-            if(AgvEngine.getInstance().stopCreateMap()) {
+            if (AgvEngine.getInstance().stopCreateMap()) {
                 mappingStatus = false;
                 return true;
             }
@@ -95,73 +109,100 @@ public class ServiceTools {
         return false;
     }
 
-    public boolean saveMap() {
+    public boolean saveMap(String fn) {
         if (initStatus) {
-            return AgvEngine.getInstance().saveMap();
+            return AgvEngine.getInstance().saveMap(fn);
         }
         return false;
     }
-    
+
     public boolean startSendLaserData() {
         if (initStatus) {
-            if(!agentStatus) {
+            if (!agentStatus) {
                 agentStatus = AgvEngine.getInstance().startSendLaserData();
             }
             return agentStatus;
         }
         return false;
     }
-    
+
     public boolean stopSendLaserData() {
-        if(agentStatus) {
-            if(AgvEngine.getInstance().stopSendLaserData()) {
+        if (agentStatus) {
+            if (AgvEngine.getInstance().stopSendLaserData()) {
                 agentStatus = false;
                 return true;
             }
         }
         return false;
     }
-    
+
     public boolean startSendMapData() {
         if (initStatus) {
-            if(!mapSendStatus) {
+            if (!mapSendStatus) {
                 mapSendStatus = AgvEngine.getInstance().startSendMapData();
             }
             return mapSendStatus;
         }
         return false;
     }
-    
+
     public boolean stopSendMapData() {
-        if(mapSendStatus) {
-            if(AgvEngine.getInstance().stopSendMapData()) {
+        if (mapSendStatus) {
+            if (AgvEngine.getInstance().stopSendMapData()) {
                 mapSendStatus = false;
                 return true;
             }
         }
         return false;
     }
-    
+
+    public boolean setPubMap(String fn) {
+        if (initStatus) {
+            return AgvEngine.getInstance().setPubMap(fn);
+        }
+        return false;
+    }
+
+    public boolean setImuLocate(float arr[]) {
+        if (initStatus) {
+            return AgvEngine.getInstance().setImuLocate(arr);
+        }
+        return false;
+    }
+
+    public boolean startRelocate(String fn,float arr[]) {
+        if (initStatus) {
+            return AgvEngine.getInstance().startRelocate(fn,arr);
+        }
+        return false;
+    }
+
+    public boolean stopRelocate() {
+        if (initStatus) {
+            return AgvEngine.getInstance().stopRelocate();
+        }
+        return false;
+    }
+
     public void setScanListener(final ScanListener apiHandlerGetLaser) {
         AgvEngine.ScanCallback agvScanCallback = new AgvEngine.ScanCallback() {
 
             public void onScanCallback(Object obj) throws Exception {
-                apiHandlerGetLaser.onScanListener((LaserMessage)obj);
+                apiHandlerGetLaser.onScanListener((LaserMessage) obj);
             }
         };
         AgvEngine.getInstance().setScanCallback(agvScanCallback);
     }
-    
+
     public void setScanListener() {
         AgvEngine.ScanCallback agvScanCallback = new AgvEngine.ScanCallback() {
 
             public void onScanCallback(Object obj) throws Exception {
-                //广播出去
-                System.out.println("ws broadCast");
+                // 广播出去
                 ServerManager.broadCast(obj);
             }
         };
         AgvEngine.getInstance().setScanCallback(agvScanCallback);
-        System.out.println("setScanListener() ,set callback func ok");
+        logger.info("set callback func ok\n");
     }
 }

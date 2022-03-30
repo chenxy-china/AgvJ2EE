@@ -1,10 +1,10 @@
 package com.jni.cxy;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 public class MapMessage {
     private Head head;
-    private ArrayList<Integer> datas;
+    private short[] datas;
 
     public Head getHead() {
         return head;
@@ -14,11 +14,11 @@ public class MapMessage {
         this.head = head;
     }
 
-    public ArrayList<Integer> getDatas() {
+    public short[] getDatas() {
         return datas;
     }
 
-    public void setDatas(ArrayList<Integer> datas) {
+    public void setDatas(short[] datas) {
         this.datas = datas;
     }
 
@@ -36,7 +36,7 @@ public class MapMessage {
         public void setSeq(int seq) {
             this.seq = seq;
         }
-        
+
         public float getResolution() {
             return resolution;
         }

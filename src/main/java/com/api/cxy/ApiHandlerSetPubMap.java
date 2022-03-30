@@ -20,15 +20,15 @@ import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
+public class ApiHandlerSetPubMap extends HttpServlet implements HttpHandler {
     Logger logger = LoggerFactory.getLogger(ApiHandlerSaveMap.class);
     // 响应内容
     String response = "execution OK";
 
     private void executeCmd(String fn)
     {
-        // 保存地图
-        if (!ServiceTools.getInstance().saveMap(fn)) {
+        // 设置发布地图
+        if (!ServiceTools.getInstance().setPubMap(fn)) {
             response = "execution NG";
         }
     }
@@ -103,7 +103,6 @@ public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
 
     public void handle(HttpExchange exchange) throws IOException {
         logger.info("******" + this.getClass().getName() + "******");
-
         // 获取body中的String数据
         InputStream is = exchange.getRequestBody();
         InputStreamReader isr = new InputStreamReader(is);
@@ -157,3 +156,4 @@ public class ApiHandlerSaveMap extends HttpServlet implements HttpHandler {
         os.close();
     }
 }
+

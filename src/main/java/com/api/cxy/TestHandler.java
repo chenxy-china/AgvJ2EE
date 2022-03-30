@@ -14,38 +14,39 @@ import javax.servlet.http.HttpServletResponse;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-public class TestHandler extends HttpServlet  implements HttpHandler {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class TestHandler extends HttpServlet implements HttpHandler {
+    Logger logger = LoggerFactory.getLogger(TestHandler.class);
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
+    }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-    {}
-    
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-    {}
-    
-    public void service(HttpServletRequest request, HttpServletResponse response)
-    {
-        System.out.println("******"+this.getClass().getName()+"******");
-        
-        System.out.println("addr: " + request.getRemoteAddr() + // 客户端IP地址
+    public void doPost(HttpServletRequest request, HttpServletResponse response) {
+    }
+
+    public void service(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("******" + this.getClass().getName() + "******");
+
+        logger.info("addr: " + request.getRemoteAddr() + // 客户端IP地址
                 "; protocol: " + request.getProtocol() + // 请求协议: HTTP/1.1
                 "; method: " + request.getMethod() + // 请求方法: GET, POST 等
                 "; URI: " + request.getRequestURI()); // 请求 URI
-        
+
         // 获取请求头
         String userAgent = request.getHeader("User-Agent");
-        System.out.println("User-Agent: " + userAgent);
+        logger.info("User-Agent: " + userAgent);
 
         String ContentType = request.getHeader("Content-Type");
-        System.out.println("Content-Type: " + ContentType);
-        
+        logger.info("Content-Type: " + ContentType);
+
         // 获取body中的String数据
-        InputStream is=null;
+        InputStream is = null;
         try {
             is = request.getInputStream();
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
         InputStreamReader isr = new InputStreamReader(is);
@@ -57,42 +58,40 @@ public class TestHandler extends HttpServlet  implements HttpHandler {
                 sb.append(line);
             }
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        
+
         // 将资料解码
         String body = sb.toString();
-        System.out.println("body: " + body);
-        System.out.println(" ");
-        
+        logger.info("body: " + body);
+        logger.info(" ");
+
         try {
             response.setHeader("Content-Type", "text/html; charset=UTF-8");
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Method", "POST,GET");
-            
+
             response.getWriter().println("connect AGV http server OK");
             response.getWriter().println(new Date().toLocaleString());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
     public void handle(HttpExchange exchange) throws IOException {
-        System.out.println("******"+this.getClass().getName()+"******");
-        
-        System.out.println("addr: " + exchange.getRemoteAddress() + // 客户端IP地址
+        logger.info("******" + this.getClass().getName() + "******");
+
+        logger.info("addr: " + exchange.getRemoteAddress() + // 客户端IP地址
                 "; protocol: " + exchange.getProtocol() + // 请求协议: HTTP/1.1
                 "; method: " + exchange.getRequestMethod() + // 请求方法: GET, POST 等
                 "; URI: " + exchange.getRequestURI()); // 请求 URI
 
         // 获取请求头
         String userAgent = exchange.getRequestHeaders().getFirst("User-Agent");
-        System.out.println("User-Agent: " + userAgent);
+        logger.info("User-Agent: " + userAgent);
 
         String ContentType = exchange.getRequestHeaders().getFirst("Content-Type");
-        System.out.println("Content-Type: " + ContentType);
+        logger.info("Content-Type: " + ContentType);
 
         InputStream is = exchange.getRequestBody();
         InputStreamReader isr = new InputStreamReader(is);
@@ -103,8 +102,8 @@ public class TestHandler extends HttpServlet  implements HttpHandler {
             sb.append(line);
         }
         String body = sb.toString();
-        System.out.println("body: " + body);
-        System.out.println(" ");
+        logger.info("body: " + body);
+        logger.info(" ");
 
         // 响应内容
         String response = "connect AGV http server OK";
@@ -125,4 +124,5 @@ public class TestHandler extends HttpServlet  implements HttpHandler {
         // 关闭处理器, 同时将关闭请求和响应的输入输出流（如果还没关闭）
         os.close();
     }
+
 }
