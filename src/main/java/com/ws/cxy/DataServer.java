@@ -8,20 +8,24 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DataServer {
+    Logger logger = LoggerFactory.getLogger(DataServer.class);
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
     private Session session;
     
     @OnOpen
     public void onOpen(Session session){
-        System.out.println("client ws connect");
+        logger.info("new ws connection " + session.getId() +  this.getClass().getName());
         this.session = session;
         ServerManager.add(this);
     }
     
     @OnClose
     public void onClose(){
-        System.out.println("client ws disconnect");
+        logger.info("close ws connection " +  this.getClass().getName());
         ServerManager.remove(this);
     }
     
@@ -31,12 +35,12 @@ public class DataServer {
     
     @OnMessage
     public void onMessage(String message, Session session) {
-        System.out.println("来自客户端的消息:" + message);
+        logger.info("message from client:" + message);
     }
  
     @OnError
     public void onError(Session session, Throwable error){
-        System.out.println("发生错误");
+        logger.info("error");
         error.printStackTrace();
     }
 }

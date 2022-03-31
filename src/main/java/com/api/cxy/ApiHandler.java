@@ -22,7 +22,7 @@ import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ApiHandler implements HttpHandler {
+public class ApiHandler extends HttpServlet implements HttpHandler {
     Logger logger = LoggerFactory.getLogger(ApiHandler.class);
 
     public void init(ServletConfig config) {
